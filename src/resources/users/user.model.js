@@ -29,16 +29,16 @@ User.pre('save', async function preSave(next) {
   next();
 });
 
-User.pre('findOneAndUpdate', async function preUpdate(next) {
-  if (this._update.$set.password) {
-    this._update.$set.password = await bcrypt.hash(
-      this._update.$set.password,
-      10
-    );
-  }
+// User.pre('findOneAndUpdate', async function preUpdate(next) {
+//   if (this._update.$set.password) {
+//     this._update.$set.password = await bcrypt.hash(
+//       this._update.$set.password,
+//       10
+//     );
+//   }
 
-  next();
-});
+//   next();
+// });
 
 addMethods(User);
 

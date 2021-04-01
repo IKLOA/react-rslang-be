@@ -1,6 +1,7 @@
 const { OK, NO_CONTENT } = require('http-status-codes');
 const router = require('express').Router();
 const upload = require('../../utils/upload');
+const User = require('./user.model');
 
 const userService = require('./user.service');
 const { id, user } = require('../../utils/validation/schemas');
@@ -41,6 +42,35 @@ router.put(
     res.status(OK).send(userEntity.toResponse());
   }
 );
+
+router.patch('/', upload.single('photo'), async (req, res) => {
+  try {
+    const { name, email } = req.body;
+    const photo = req.file ? req.file.path : null;
+
+    const updated = {
+      name
+    };
+
+    if (photo) updated.photo = photo;
+
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        email
+      },
+      {
+        $set: updated
+      },
+      {
+        new: true
+      }
+    );
+
+    res.status(200).json({ name: updatedUser.name, photo: updatedUser.photo });
+  } catch (e) {
+    console.log(e);
+  }
+});
 
 router.delete(
   '/:id',
