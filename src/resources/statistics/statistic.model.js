@@ -11,10 +11,14 @@ const StatisticSchema = new Schema(
     learnedWords: {
       type: Number
     },
+    statiscticDate: { type: String },
     optional: {
       type: Object,
       required: false
     }
+  },
+  {
+    timestamps: true
   },
   { collection: 'statistic' }
 );
