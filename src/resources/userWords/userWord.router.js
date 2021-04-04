@@ -51,18 +51,18 @@ router.post('/:wordId', async (req, res) => {
 
 router.patch('/:wordId', async (req, res) => {
   try {
-    const { currentGame, userWordId } = req.body;
-
-    const word = await UserWord.findOne({ _id: userWordId });
+    const word = await UserWord.findOne({
+      userId: req.userId,
+      wordId: req.params.wordId
+    });
     const games = word.games;
-    console.log(games[currentGame]);
-    games[currentGame] = games[currentGame] + 1;
+    games[req.body.currentGame] = games[req.body.currentGame] + 1;
 
     const updated = { games };
 
     const updatedUserWord = await UserWord.findOneAndUpdate(
       {
-        _id: userWordId
+        _id: word._id
       },
       {
         $set: updated
