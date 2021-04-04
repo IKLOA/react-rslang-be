@@ -40,7 +40,7 @@ const schemas = {
     .options({ abortEarly: false, allowUnknown: false })
     .keys({
       difficulty: Joi.string().max(50),
-      optional: optionalScheme
+      currentGame: Joi.string().max(50)
     }),
   statistics: Joi.object()
     .options({ abortEarly: false, allowUnknown: false })
