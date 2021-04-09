@@ -1,10 +1,12 @@
 const { OK, NO_CONTENT } = require('http-status-codes');
 const UserWord = require('./userWord.model');
+const dateFormat = require('dateformat');
 const router = require('express').Router({ mergeParams: true });
 const { userWord, wordId } = require('../../utils/validation/schemas');
 const { validator } = require('../../utils/validation/validator');
 const { ENTITY_EXISTS } = require('../../errors/appErrors');
 const ENTITY_NAME = 'user word';
+
 const MONGO_ENTITY_EXISTS_ERROR_CODE = 11000;
 
 const userWordService = require('./userWord.service');
@@ -19,7 +21,14 @@ router.get('/:wordId', validator(wordId, 'params'), async (req, res) => {
   res.status(OK).send(word.toResponse());
 });
 
+router.get('/get/statistic', async (req, res) => {
+  const date = dateFormat(new Date(), 'yyyy-mm-dd');
+  const words = await UserWord.find({ userId: req.userId, userWordDate: date });
+  res.status(200).json(words);
+});
+
 router.post('/:wordId', async (req, res) => {
+  const date = dateFormat(new Date(), 'yyyy-mm-dd');
   try {
     const games = {
       savannah: 0,
@@ -34,7 +43,9 @@ router.post('/:wordId', async (req, res) => {
       wordId: req.params.wordId,
       userId: req.userId,
       difficulty: req.body.difficulty,
-      games
+      games,
+      isRight: req.body.isRight,
+      userWordDate: date
     };
 
     await UserWord.create(newUserWord);
@@ -50,6 +61,7 @@ router.post('/:wordId', async (req, res) => {
 });
 
 router.patch('/:wordId', async (req, res) => {
+  const date = dateFormat(new Date(), 'yyyy-mm-dd');
   try {
     const word = await UserWord.findOne({
       userId: req.userId,
@@ -58,7 +70,7 @@ router.patch('/:wordId', async (req, res) => {
     const games = word.games;
     games[req.body.currentGame] = games[req.body.currentGame] + 1;
 
-    const updated = { games };
+    const updated = { games, userWordDate: date, isRight: req.body.isRight };
 
     const updatedUserWord = await UserWord.findOneAndUpdate(
       {

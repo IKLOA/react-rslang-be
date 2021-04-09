@@ -14,7 +14,9 @@ const UserWordsSchema = new Schema(
     wordId: { type: mongoose.Schema.Types.ObjectID, required: true },
     userId: { type: mongoose.Schema.Types.ObjectID, required: true },
     difficulty: { type: String, required: false },
-    games: { type: games }
+    games: { type: games },
+    isRight: { type: Boolean, required: true },
+    userWordDate: { type: String }
   },
   { collection: 'userWords' }
 );
